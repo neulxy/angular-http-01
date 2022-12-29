@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
   apiURL =
     'https://ng-complete-guide-3d267-default-rtdb.firebaseio.com/posts.json';
   isFetching = false;
+  error = null;
 
   constructor(private http: HttpClient, private postsService: PostsService) {}
 
@@ -31,10 +32,15 @@ export class AppComponent implements OnInit {
   onFetchPosts() {
     // Send Http request
     this.isFetching = true;
-    this.postsService.fetchPosts().subscribe((posts) => {
-      this.loadedPosts = posts;
-      this.isFetching = false;
-    });
+    this.postsService.fetchPosts().subscribe(
+      (posts) => {
+        this.loadedPosts = posts;
+        this.isFetching = false;
+      },
+      (error) => {
+        this.error = error.message;
+      }
+    );
   }
 
   onClearPosts() {
