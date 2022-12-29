@@ -12,11 +12,7 @@ export class PostsService {
 
   createAndStorePost(title: string, content: string) {
     const postData: Post = { title: title, content: content };
-    this.http
-      .post<{ name: string }>(this.apiURL, postData)
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
+    return this.http.post<{ name: string }>(this.apiURL, postData);
   }
 
   fetchPosts(): Observable<Post[]> {
