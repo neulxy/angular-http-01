@@ -45,6 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isFetching = false;
       },
       (error) => {
+        this.isFetching = false;
         this.error = error.message;
       }
     );
@@ -55,5 +56,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.postsService.clearPosts().subscribe(() => {
       this.loadedPosts = [];
     });
+  }
+
+  onHandleError() {
+    this.error = null;
   }
 }
