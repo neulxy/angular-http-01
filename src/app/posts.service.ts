@@ -58,17 +58,19 @@ export class PostsService {
   }
 
   clearPosts() {
-    return this.http.delete(this.apiURL, { observe: 'events' }).pipe(
-      tap((event) => {
-        console.log(event);
-        if (event.type === HttpEventType.Sent) {
-          console.log('request was sent');
-          //Do something in the UI to let the user know the request was sent and waiting for the response
-        }
-        if (event.type === HttpEventType.Response) {
-          console.log(event.body);
-        }
-      })
-    );
+    return this.http
+      .delete(this.apiURL, { observe: 'events', responseType: 'text' })
+      .pipe(
+        tap((event) => {
+          console.log(event);
+          if (event.type === HttpEventType.Sent) {
+            console.log('request was sent');
+            //Do something in the UI to let the user know the request was sent and waiting for the response
+          }
+          if (event.type === HttpEventType.Response) {
+            console.log(event.body);
+          }
+        })
+      );
   }
 }
