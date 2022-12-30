@@ -1,7 +1,12 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpEventType,
+  HttpHeaders,
+  HttpParams,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post } from './post.model';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -14,14 +19,16 @@ export class PostsService {
 
   createAndStorePost(title: string, content: string) {
     const postData: Post = { title: title, content: content };
-    this.http.post<{ name: string }>(this.apiURL, postData).subscribe(
-      (responseData) => {
-        console.log(responseData);
-      },
-      (error) => {
-        this.error.next(error.message);
-      }
-    );
+    this.http
+      .post<{ name: string }>(this.apiURL, postData, { observe: 'response' })
+      .subscribe(
+        (responseData) => {
+          console.log(responseData);
+        },
+        (error) => {
+          this.error.next(error.message);
+        }
+      );
   }
 
   fetchPosts(): Observable<Post[]> {
@@ -51,6 +58,17 @@ export class PostsService {
   }
 
   clearPosts() {
-    return this.http.delete(this.apiURL);
+    return this.http.delete(this.apiURL, { observe: 'events' }).pipe(
+      tap((event) => {
+        console.log(event);
+        if (event.type === HttpEventType.Sent) {
+          console.log('request was sent');
+          //Do something in the UI to let the user know the request was sent and waiting for the response
+        }
+        if (event.type === HttpEventType.Response) {
+          console.log(event.body);
+        }
+      })
+    );
   }
 }
